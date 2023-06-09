@@ -16,6 +16,9 @@
     "styled-components": "^6.0.0-rc.3",
     "web-vitals": "^2.1.4"
   },
+  "engines": {
+    "node": ">=16.0.0"
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
