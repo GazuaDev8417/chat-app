@@ -26,11 +26,15 @@ export default function Chat(){
     const user = localStorage.getItem('user')
     const [profileImg, setProfileImg] = useState(null)
     const [attach, setAttach] = useState(null)
+    const [attachToSend, setAttachToSend] = useState(null)
+    const [attachToKeep, setAttachToKeep] = useState(null)
     const [attachName, setAttachName] = useState('')
     const [users, setUsers] = useState([])
     const [messages, setMessages] = useState([])
     const [showModal, setShowModal] = useState(false)
     const [form, setForm] = useState({ input:'', description:'' })
+    const navigationEntries = performance.getEntriesByType('navigation')
+    const navigationType = navigationEntries.length ? navigationEntries[0].type : 'navigate'
 
 
 
@@ -53,6 +57,15 @@ export default function Chat(){
         })
     }
 
+    const getUsers = ()=>{
+        axios.get(`${url}/users`).then(res=>{
+            const filteredUsers = res.data.filter(username => username.nickname !== user)
+            setUsers(filteredUsers)
+        }).catch(e=>{
+            alert(e.response.data)
+        })
+    }
+
 
     const handleProfileImg = (e)=>{
         const file = e.target.files[0]
@@ -61,11 +74,21 @@ export default function Chat(){
 
     const handleAttachment = (e)=>{
         const file = e.target.files[0]
+        const fileReader = new FileReader()
         setAttachName(file.name)
         setAttach(URL.createObjectURL(file))
+        setAttachToKeep(e.target.files[0])
+
+        fileReader.onload = ()=>{
+            setAttachToSend(fileReader.result)
+        }
         
         setShowModal(true)
         form.input = ''
+
+        if(file){
+            fileReader.readAsDataURL(file)
+        }
     }
     
     useEffect(()=>{
@@ -79,35 +102,27 @@ export default function Chat(){
         const { name, value } = e.target
         setForm({ ...form, [name]: value })
     }
-    
-
-    const getUsers = ()=>{
-        axios.get(`${url}/users`).then(res=>{
-            setUsers(res.data)
-        }).catch(e=>{
-            alert(e.response.data)
-        })
-    }
 
     
     const sendMessage = (e)=>{
-        e.preventDefault()
-
-        const body = {
-            sender: user,
-            message: form.input,
-            description: form.description,
-            filename: attachName
-        }
+        e.preventDefault()       
 
         socket.emit('message', {
             sender: user,
             message: form.input,
             description: form.description,
-            file: attach
+            file: attachToSend
         })
 
-        axios.post(`${url}/messages`, body).then(()=>{
+        const formData = new FormData()
+        formData.append('files', attachToKeep)
+
+        formData.append('sender', user)
+        formData.append('message', form.input)
+        formData.append('description', form.description)
+        formData.append('filename', attachName)
+
+        axios.post(`${url}/messages`, formData).then(()=>{
             
         }).catch(e=>{
             alert(e.response.data)
@@ -231,9 +246,19 @@ export default function Chat(){
                                 ) : (
                                     <div className="fileContainer">
                                         <p>
-                                            <img src={message.file}
-                                                alt="Imagem de axexo" 
-                                                className="fileContent" /><br/>
+                                            {navigationType === 'reload' ||
+                                            navigationType ===  'back_forward' ||
+                                            navigationType === 'prerender' ||
+                                            navigationType === 'undefined' ? (
+                                                <img src={`${url}/display-files/${message.filename}`}
+                                                    alt="Imagem de axexo" 
+                                                    className="fileContent"/>
+                                            ) : (
+                                                <img src={message.file}
+                                                    alt="Imagem de axexo" 
+                                                    className="fileContent"/>
+                                            )}
+                                            <br/>
                                             {message.description}
                                         </p>
                                     </div>
