@@ -33,8 +33,7 @@ export default function Chat(){
 
 
 
-   console.log(messages)
-   
+      
     useEffect(()=>{
         if(!user){
             navigate('/')
