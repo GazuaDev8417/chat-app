@@ -26,6 +26,7 @@ export default function Chat(){
     const user = localStorage.getItem('user')
     const [profileImg, setProfileImg] = useState(null)
     const [attach, setAttach] = useState(null)
+    const [attachName, setAttachName] = useState('')
     const [users, setUsers] = useState([])
     const [messages, setMessages] = useState([])
     const [showModal, setShowModal] = useState(false)
@@ -39,8 +40,18 @@ export default function Chat(){
             navigate('/')
         }
         
+        getMessages()
         getUsers()
     }, [])
+
+
+    const getMessages = ()=>{
+        axios.get(`${url}/messages`).then(res=>{
+            setMessages(res.data)
+        }).catch(e=>{
+            alert(e.response.data)
+        })
+    }
 
 
     const handleProfileImg = (e)=>{
@@ -50,6 +61,7 @@ export default function Chat(){
 
     const handleAttachment = (e)=>{
         const file = e.target.files[0]
+        setAttachName(file.name)
         setAttach(URL.createObjectURL(file))
         
         setShowModal(true)
@@ -81,11 +93,24 @@ export default function Chat(){
     const sendMessage = (e)=>{
         e.preventDefault()
 
+        const body = {
+            sender: user,
+            message: form.input,
+            description: form.description,
+            filename: attachName
+        }
+
         socket.emit('message', {
             sender: user,
             message: form.input,
             description: form.description,
             file: attach
+        })
+
+        axios.post(`${url}/messages`, body).then(()=>{
+            
+        }).catch(e=>{
+            alert(e.response.data)
         })
 
         setForm({ input:'' })
@@ -109,8 +134,12 @@ export default function Chat(){
         const decide = window.confirm('Tem certeza que deseja deslogar?')
 
         if(decide){
-            localStorage.clear()
-            navigate('/')
+            axios.delete(`${url}/signout/${user}`).then(()=>{
+                localStorage.clear()
+                navigate('/')
+            }).catch(e=>{
+                alert(e.response.data)
+            })
         }
     }
 
