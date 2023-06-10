@@ -237,15 +237,8 @@ export const Container = styled.div`
         padding-left: 20px;
     }
 
-    .modal .inputContainer button{
-        border-radius: 100%;
-        border: none;
-        outline: none;
-        padding: 7px;
-        cursor: pointer;
-    }
-
     .modal .inputContainer #sendMessage{
+        cursor: pointer;
         color: green;
         font-size: 18pt;
     }
@@ -337,9 +330,4 @@ export const Container = styled.div`
     .bottomNavigation button:active{
         transform: scale(0.8);
     }
-
-    /* .bottomNavigation #sendMessage{
-        font-size: 18pt;
-        color: rgb(38, 37, 37);
-    } */
 `

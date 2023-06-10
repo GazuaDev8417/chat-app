@@ -21,20 +21,21 @@ export default function Chat(){
     const inputAttach = useRef(null)
     const modalRef = useRef(null)
     const attachImage = useRef(null)
+    const containerRef = useRef(null)
+    const btnRef = useRef(null)
     const user = localStorage.getItem('user')
     const [profileImg, setProfileImg] = useState(null)
     const [attach, setAttach] = useState(null)
     const [users, setUsers] = useState([])
     const [messages, setMessages] = useState([])
     const [showModal, setShowModal] = useState(false)
-    const [form, setForm] = useState({
-        description: '',
-        input:''
-    })
+    const [form, setForm] = useState({ input:'', description:'' })
 
 
+
+   console.log(messages)
+   
     useEffect(()=>{
-
         if(!user){
             navigate('/')
         }
@@ -53,6 +54,7 @@ export default function Chat(){
         setAttach(URL.createObjectURL(file))
         
         setShowModal(true)
+        form.input = ''
     }
     
     useEffect(()=>{
@@ -61,6 +63,7 @@ export default function Chat(){
         }
     }, [attach])
 
+    
     const onChange = (e)=>{
         const { name, value } = e.target
         setForm({ ...form, [name]: value })
@@ -78,17 +81,17 @@ export default function Chat(){
     
     const sendMessage = (e)=>{
         e.preventDefault()
-        
-        const newMessage = {
+
+        socket.emit('message', {
             sender: user,
-            message: form.input || '',
-            description: form.description || '',
-            file: attach || ''
-        }
+            message: form.input,
+            description: form.description,
+            file: attach
+        })
 
-        socket.emit('message', newMessage)        
-
-        setForm({ input:'' })        
+        setForm({ input:'' })
+        setShowModal(false)
+        containerRef.current.scrollTop = containerRef.current.scrollHeight
     }
 
     useEffect(()=>{
@@ -97,11 +100,11 @@ export default function Chat(){
         })
 
         return () => {
-            socket.off('receivedMessage');
+            socket.off('receivedMessage')
           }
 
     }, [])
-
+    
 
     const logout = ()=>{
         const decide = window.confirm('Tem certeza que deseja deslogar?')
@@ -130,7 +133,7 @@ export default function Chat(){
                     {profileImg ? (
                         <img src={profileImg}
                             onClick={()=> inputFile.current.click()} 
-                            alt="Profile Image" id="imgProfile"/>
+                            alt="Profile" id="imgProfile"/>
                     ) : <BsFillPersonFill
                             onClick={()=> inputFile.current.click()}
                             className='icon'/>}                    
@@ -157,7 +160,8 @@ export default function Chat(){
                             id='close'/>
                         <img ref={attachImage} alt="attachImage" id="attachImage"/>
                         <div className="inputContainer">
-                            <input form='form' 
+                            <input
+                                form='form'  
                                 type="text"
                                 name='description'
                                 value={form.description}
@@ -165,19 +169,25 @@ export default function Chat(){
                                 id="imageDescription"
                                 autoFocus
                                 placeholder='Mensagem'/>
-                            <button type="submit" form='form'>
-                                <IoSendSharp id='sendMessage'/>
-                            </button>
+                            <button
+                                form='form'
+                                ref={btnRef}
+                                style={{display:'none'}} 
+                                type="submit"></button>
+                            <IoSendSharp
+                                onClick={()=> btnRef.current.click()} 
+                                id='sendMessage'/>
                         </div>
                     </div>
                 ) : null}
-                <div className="messages">
+                <div className="messages" ref={containerRef}>
                     {messages && messages.map(message =>(
                         <div className={
                             `messageContainer ${message.sender === user ? '' : 'left'}`
                         } key={message.id}>
                             <div style={{
-                                backgroundColor: message.sender === user ? 'lightgray' : 'whitesmoke'
+                                background: message.sender === user ? 
+                                'linear-gradient(lightgray, whitesmoke)' : 'linear-gradient(whitesmoke, gray)'
                             }} 
                                 className="message">
                                 <div className="messageInfo">
@@ -188,9 +198,18 @@ export default function Chat(){
                                         </small>
                                     </p>
                                 </div>
-                                <div className="textContainer">
-                                    <p>{message.message}</p>                        
-                                </div>
+                                {message.message ? (
+                                    <p>{message.message}</p>
+                                ) : (
+                                    <div className="fileContainer">
+                                        <p>
+                                            <img src={message.file}
+                                                alt="Imagem de axexo" 
+                                                className="fileContent" /><br/>
+                                            {message.description}
+                                        </p>
+                                    </div>
+                                )}
                             </div>
                         </div> 
                     ))}
