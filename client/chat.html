@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>    
+    <style>
+        :root{
+            color-scheme: light dark;
+        }
+        body{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            height: 100vh;
+        }
+        header{
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.5rem;
+        }
+        #messages{
+            list-style-type: none;
+            width: 30vw;
+        }
+        #messages li{
+            padding: .5rem 1rem;
+            border-radius: 10px;
+        }
+        #messages li:nth-child(odd){
+            background: lightgreen;
+        }
+        .form{
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translate(-50%, -20%);
+        }
+        .input{
+            border-radius: 20px;
+            font-size: 1rem;
+            outline: none;
+            border: none;
+            height: 30px;
+            width: 25vw;
+            padding-left: 10px;
+        }
+        .btn{
+            height: 30px;
+            border: none;
+            border-radius: 5px;
+            padding: 0 20px;
+            cursor: pointer;
+        }
+        .btn:hover{
+            box-shadow: 0 0 5px;            
+        }
+        .btn:active{
+            transform: scale(.9);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Chat</h1>
+        <button class="btn" id="logout">Logout</button>
+    </header>
+    <section class="chat">
+        <ul id="messages"></ul>
+        <form class="form" id="form">
+            <input type="text" class="input" id="input" autofocus>
+            <button class="btn">Enviar</button>
+        </form>
+    </section>
+</body>
+<script type="module" defer>
+    import { io } from 'https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.esm.min.js'
+
+    const username = localStorage.getItem('username')
+    const socket = io({
+        auth: { username }
+    })
+    const form = document.querySelector('#form')
+    const input = document.querySelector('#input')
+    const messages = document.querySelector('#messages') 
+    const logout = document.querySelector('#logout')
+    
+
+    logout.onclick = ()=>{
+        const decide = window.confirm('Tem certeza que deseja sair do chat?')
+
+        if(decide){
+            localStorage.removeItem('username')
+            socket.emit('logout', username)
+            location.href = 'index.html'
+        }
+    }
+
+
+    socket.on('message', (msg, usr)=>{
+        const item = `
+            <li>
+                <small>${usr}</small><br>
+                ${msg}
+            </li>
+        `
+        messages.insertAdjacentHTML('beforeend', item)
+        messages.scrollTop = messages.scrollHeight
+    })
+
+    
+    form.addEventListener('submit', (e)=>{
+        e.preventDefault()
+        
+        if(input.value){
+            socket.emit('message', input.value, username)
+
+            input.value = ''
+        }
+    })
+</script>
+</html>

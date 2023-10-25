@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entrar no chat</title>
+</head>
+<body>
+    <header>
+        <h1>Seja Bem Vindo!</h1>
+    </header>
+    <section class="login">
+        <form class="form" id="form">
+            <fieldset>
+                <legend>Use um nome de usuário para entrar no chat</legend>
+                <input type="text" class="input" id="input" required>
+                <button class="btn">Entrar</button>
+            </fieldset>
+        </form>
+    </section>
+</body>
+<script defer>
+    const form = document.querySelector('#form')
+    const input = document.querySelector('#input')
+    
+    form.addEventListener('submit', (e)=>{
+        e.preventDefault()
+        
+        localStorage.setItem('username', input.value)
+        location.href = 'chat.html'
+    })
+</script>
+</html>
