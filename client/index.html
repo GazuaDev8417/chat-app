@@ -19,15 +19,27 @@
         </form>
     </section>
 </body>
-<script defer>
+<script type="module" defer>
+    import { io } from 'https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.esm.min.js'
+
+    const socket = io()
     const form = document.querySelector('#form')
     const input = document.querySelector('#input')
     
     form.addEventListener('submit', (e)=>{
         e.preventDefault()
-        
-        localStorage.setItem('username', input.value)
-        location.href = 'chat.html'
+       
+        socket.emit('login', (input.value))
+
+        socket.on('login', msg=>{
+            if(msg !== 'ok'){
+                alert(msg)
+            }else{
+                localStorage.setItem('username', input.value)
+                location.href = 'chat.html'
+            }
+
+        })
     })
 </script>
 </html>

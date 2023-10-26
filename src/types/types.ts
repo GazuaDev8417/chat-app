@@ -5,3 +5,13 @@ export interface Message{
     description:string
     filename:string
 }
+
+export interface Payload{
+    username:string
+    privateChat:string
+}
+
+export interface TokenData{
+    payload:string
+    iat:number
+}

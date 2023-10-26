@@ -31,10 +31,6 @@
         #messages li:nth-child(odd){
             background: lightgreen;
         }
-        #messages li:hover{
-            box-shadow: 0 0 5px;
-            cursor: pointer;
-        }
         .form{
             display: flex;
             align-items: center;
@@ -83,17 +79,19 @@
 </body>
 <script type="module" defer>
     import { io } from 'https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.esm.min.js'
+    
 
     const username = localStorage.getItem('username')
+    const privateChat = localStorage.getItem('privateChat')
     
     const socket = io({
-        auth: { username }
+        auth: { username, privateChat }
     })
     const form = document.querySelector('#form')
     const input = document.querySelector('#input')
     const messages = document.querySelector('#messages') 
     const logout = document.querySelector('#logout')
-
+    
 
     logout.onclick = ()=>{
         const decide = window.confirm('Tem certeza que deseja sair do chat?')
@@ -106,40 +104,19 @@
     }
 
 
-    socket.on('message', (msg, usr)=>{
-        const item = `
-            <li >
-                <small>${usr}</small><br>
-                ${msg}
-            </li>
-        `
-        const newItem = document.createRange()
-            .createContextualFragment(item)
-            .querySelector('li')
-        
-        newItem.addEventListener('click', ()=>{ 
-            if(usr === username){
-                alert('Você só pode conversar no privado com outros usuários.')
-                return
-            }
+    socket.on('private', (token)=>{
             
-            localStorage.setItem('privateChat', usr)
-            location.href = 'private.html'
+        form.addEventListener('submit', (e)=>{
+            e.preventDefault()
+            
+            if(input.value){
+                socket.emit(token, input.value)
+    
+                input.value = ''
+            }
         })
-
-        messages.appendChild(newItem)
-        messages.scrollTop = messages.scrollHeight
     })
 
     
-    form.addEventListener('submit', (e)=>{
-        e.preventDefault()
-        
-        if(input.value){
-            socket.emit('message', input.value)
-
-            input.value = ''
-        }
-    })
 </script>
 </html>
