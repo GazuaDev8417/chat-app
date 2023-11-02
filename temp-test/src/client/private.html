@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat - Privado</title>
+</head>
+<body>
+    <header>
+        <h1>Chat Privado</h1>
+        <nav class="nav-container">
+            <ul id="usersList"></ul>
+        </nav>
+    </header>
+    <section>
+        <form action="" id="form">
+            <input type="text" id="input">
+            <button>Enviar</button>
+        </form>
+    </section>
+</body>
+<script type="module">
+    import { io } from 'https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.esm.min.js'
+
+    const user = localStorage.getItem('username')
+    const usersList = document.querySelector('#usersList')
+    const form = document.getElementById('form')
+    const input = document.getElementById('input')
+    const socket = io.of('/private')
+
+    socket.on('private', (msg)=>{
+        const item = `<li>${msg}</li>`
+        usersList.insertAdjacentHTML('afterend', item)
+    })
+
+    form.addEventListener('submit', (e)=>{
+        e.preventDefault()
+
+        socket.emit('private', input.value)
+        input.value = ''
+    })
+
+</script>
+</html>

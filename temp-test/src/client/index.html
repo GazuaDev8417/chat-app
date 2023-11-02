@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <header>
+        <h1>Login</h1>
+    </header>
+    <section>
+        <form action="" id="form">
+            <input type="text" id="input" required>
+            <button>Entrar</button>
+        </form>
+    </section>
+</body>
+<script type="module">
+    import { io } from 'https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.esm.min.js'
+
+    const socket = io()
+    const form = document.getElementById('form')
+    const input = document.getElementById('input')
+
+    form.addEventListener('submit', (e)=>{
+        e.preventDefault()
+
+        socket.emit('login', input.value)
+        localStorage.setItem('username', input.value)
+        location.href = 'chat.html'
+    })
+
+</script>
+</html>
