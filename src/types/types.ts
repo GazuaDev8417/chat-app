@@ -6,9 +6,14 @@ export interface Message{
     filename:string
 }
 
+export interface User{
+    id:string
+    user:string
+}
+
 export interface Payload{
     username:string
-    privateChat:string
+    user:string
 }
 
 export interface TokenData{

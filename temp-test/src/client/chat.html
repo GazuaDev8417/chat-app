@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+</head>
+<body>
+    <header>
+        <h1>Chat</h1>
+        <nav class="nav-container">
+            <ul id="usersList"></ul>
+        </nav>
+    </header>
+    <section>
+        <ul id="messages"></ul>
+        <form action="" id="form">
+            <input type="text" id="input">
+            <button>Enviar</button>
+        </form>
+    </section>
+</body>
+<script type="module">
+    import { io } from 'https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.esm.min.js'
+
+    const user = localStorage.getItem('username')
+    const usersList = document.querySelector('#usersList')
+    const form = document.getElementById('form')
+    const input = document.getElementById('input')
+    const messages = document.getElementById('messages')
+    const socket = io({ auth: { user } })
+
+    socket.on('users', (username)=>{
+        const item = `<li>${username}</li>`
+        const newItem = document.createRange().createContextualFragment(item)
+            .querySelector('li')        
+        newItem.addEventListener('click', ()=>{
+            if(username === user){
+                return alert('Você não pode solicitar à si mesmo para o privado')
+            }
+
+            socket.emit('privateRequest', username)
+        })
+        usersList.appendChild(newItem)
+    })
+
+    socket.on('messages', (msg)=>{
+        const item = `<li>${msg}</li>`
+
+        messages.insertAdjacentHTML('beforeend', msg)
+    })
+
+    form.addEventListener('submit', (e)=>{
+        e.preventDefault()
+
+        socket.emit('messages', input.value)
+        input.value = ''
+    })
+
+
+
+    socket.on('privateMessage', (senderName)=>{
+        const decide = window.confirm(senderName)
+        if(decide){
+            location.href = 'private.html'
+            socket.emit('privateMessage', `${user} aceitou a solicitação`)
+        }else{
+            socket.emit('privateMessage', `Solicitação recusada por ${user}`)
+        }
+    })
+
+</script>
+</html>

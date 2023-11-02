@@ -31,14 +31,13 @@
        
         socket.emit('login', (input.value))
 
-        socket.on('login', msg=>{
-            if(msg !== 'ok'){
-                alert(msg)
+        socket.on('login', res=>{
+            if(res !== 'ok'){
+                alert(res)
             }else{
                 localStorage.setItem('username', input.value)
                 location.href = 'chat.html'
             }
-
         })
     })
 </script>

@@ -97,7 +97,7 @@
         const decide = window.confirm('Tem certeza que deseja sair do chat?')
 
         if(decide){
-            localStorage.removeItem('username')
+            localStorage.clear()
             socket.emit('logout', username)
             location.href = 'index.html'
         }
