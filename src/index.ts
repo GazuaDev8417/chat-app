@@ -93,6 +93,7 @@ chatNamespace.on('connect', async(socket):Promise<void>=>{
 
     const messages:Message[] = await con('chat_messages')
         .select('*').orderBy('moment', 'asc')
+    //socket.emit('message', messages)
     messages.map((message)=>{
         socket.emit('message', message.message, message.sender)
     })
