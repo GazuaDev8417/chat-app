@@ -34,10 +34,19 @@ chatNamespace.on('connect', async(socket):Promise<void>=>{
 
     onlineUsers[username] = socket
 
-    socket.on('login', async(username)=>{
+    /* socket.on('disconnect', async()=>{
+        try{
+            await con('chat_messages').delete().where({ sender: username })
+            await con('chat_users').delete().where({ user: username })
+        }catch(e){
+            console.log(e)
+        }
+    }) */
+
+    socket.on('login', async(nickname)=>{
         try{
             const [user] = await con('chat_users').where({
-                user: username
+                user: nickname
             })
             
             if(user){
@@ -46,7 +55,7 @@ chatNamespace.on('connect', async(socket):Promise<void>=>{
 
             await con('chat_users').insert({
                 id: `${Date.now()}-${Math.random().toString(16)}`,
-                user: username
+                user: nickname
             })
 
             socket.emit('login', 'ok')
@@ -55,10 +64,10 @@ chatNamespace.on('connect', async(socket):Promise<void>=>{
         }
     })
 
-    socket.on('logout', async(username)=>{
+    socket.on('logout', async(nickname)=>{
         try{
-            await con('chat_messages').delete().where({ sender: username })
-            await con('chat_users').delete().where({ user: username })
+            await con('chat_messages').delete().where({ sender: nickname })
+            await con('chat_users').delete().where({ user: nickname })
         }catch(e){
             console.log(e)
         }
@@ -66,10 +75,10 @@ chatNamespace.on('connect', async(socket):Promise<void>=>{
 
 /* LIST OF ALL USERS */
     const users:User[] = username && await con('chat_users')
-    
-    users &&users.map(user=>{
+    socket.emit('users', users)
+    /* users && users.map(user=>{
         socket.emit('users', user.user)
-    })
+    }) */
    
 
 /* COMUNICATION AMONG USERS */
@@ -93,7 +102,7 @@ chatNamespace.on('connect', async(socket):Promise<void>=>{
 
     const messages:Message[] = await con('chat_messages')
         .select('*').orderBy('moment', 'asc')
-    //socket.emit('message', messages)
+        
     messages.map((message)=>{
         socket.emit('message', message.message, message.sender)
     })
