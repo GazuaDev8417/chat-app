@@ -84,8 +84,8 @@
     const username = localStorage.getItem('username')
     const privateChat = localStorage.getItem('privateChat')
     
-    const socket = io({
-        auth: { username, privateChat }
+    const socket = io('/private',{
+        auth: { username }
     })
     const form = document.querySelector('#form')
     const input = document.querySelector('#input')
@@ -103,19 +103,24 @@
         }
     }
 
-
-    socket.on('private', (token)=>{
-            
-        form.addEventListener('submit', (e)=>{
-            e.preventDefault()
-            
-            if(input.value){
-                socket.emit(token, input.value)
-    
-                input.value = ''
-            }
-        })
+    socket.on('private', (msg, sender)=>{       
+        const item = `
+            <li>
+                <small>${sender}</small><br>
+                ${msg}
+            </li>`
+        messages.insertAdjacentHTML('beforeend', item)
     })
+
+    form.addEventListener('submit', (e)=>{
+        e.preventDefault()
+
+        socket.emit('private', input.value)
+        input.value = ''
+    })
+
+
+    
 
     
 </script>

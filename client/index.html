@@ -22,9 +22,18 @@
 <script type="module" defer>
     import { io } from 'https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.esm.min.js'
 
-    const socket = io()
+    const username = localStorage.getItem('username')
+    const socket = io('/chat', {
+        auth: { username }
+    })
     const form = document.querySelector('#form')
     const input = document.querySelector('#input')
+
+
+    document.addEventListener('DOMContentLoaded', ()=>{
+        location.href = 'chat.html'
+    })
+
     
     form.addEventListener('submit', (e)=>{
         e.preventDefault()
