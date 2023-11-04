@@ -10,6 +10,15 @@ const app = express()
 const server = createServer(app)
 const io = new Server(server)
 const port = process.env.port ?? 3003
+
+
+
+app.use(express.static(path.join(__dirname, '../client')))
+
+server.listen(port, ()=>{
+    console.log(`Servidor rodando na porta: ${port}`)
+})
+
 //NAMESPACES
 const chatNamespace = io.of('/chat')
 const notificationNamespace = io.of('/notifications')
@@ -17,25 +26,28 @@ const privateNamespace = io.of('/private')
 
 //TO SOTORED OLINE USERS
 const onlineUsers:{ [key:string]:any } = {}
+/* ----------------------------------- */
 
 chatNamespace.on('connect', async(socket):Promise<void>=>{
-    const { username, privateChat } = socket.handshake.auth
+    console.log('Usuário conectado')
+    const { username } = socket.handshake.auth
 
     onlineUsers[username] = socket
-    
-    socket.on('connect', ()=>{
-        console.log('Usuário conectado')
-    })
 
     socket.on('login', async(username)=>{
         try{
-            const user = await con('chat_messages').where({
-                sender: username
+            const [user] = await con('chat_users').where({
+                user: username
             })
             
-            if(user.length > 0){
+            if(user){
                 throw new Error('Usuário já existe!')
             }
+
+            await con('chat_users').insert({
+                id: `${Date.now()}-${Math.random().toString(16)}`,
+                user: username
+            })
 
             socket.emit('login', 'ok')
         }catch(e:any){
@@ -53,13 +65,11 @@ chatNamespace.on('connect', async(socket):Promise<void>=>{
     })
 
 /* LIST OF ALL USERS */
-    /* const users:User[] = await con('chat_users')
-    users.map(user=>{
+    const users:User[] = username && await con('chat_users')
+    
+    users &&users.map(user=>{
         socket.emit('users', user.user)
     })
-    socket.on('users', (msg)=>{
-        console.log(msg)
-    }) */
    
 
 /* COMUNICATION AMONG USERS */
@@ -75,7 +85,7 @@ chatNamespace.on('connect', async(socket):Promise<void>=>{
                 moment: Date.now()
             })
 
-            io.emit('message', msg)
+            chatNamespace.emit('message', msg)
         }catch(e){
             console.log(`Erro inserir mensagem no banco: ${e}`)
         }
@@ -86,18 +96,35 @@ chatNamespace.on('connect', async(socket):Promise<void>=>{
     messages.map((message)=>{
         socket.emit('message', message.message, message.sender)
     })
-})
 
-notificationNamespace.on('connect', (socket)=>{
-    socket.on('privateCall', msg=>{
-        console.log(msg)
+/* SHIPPING REQUEST FOR PRIVATE CHAT */
+    socket.on('privateRequest', (recipient)=>{
+        const recipientSocket = onlineUsers[recipient]
+        
+        if(recipientSocket){
+            recipientSocket.emit('privateMessage', username)
+        }
+    })
+    
+    socket.on('privateMessage', (recipient, msg)=>{
+        const recipientSocket = onlineUsers[recipient]
+
+        if(recipientSocket){
+            if(msg === 'Aceitou'){
+                recipientSocket.emit('private', 'Aceitou', username)
+            }else if(msg === 'Recusou'){
+                recipientSocket.emit('private', 'Recusou', username)
+            }
+        }
     })
 })
 
 
-app.use(express.static(path.join(__dirname, '../client')))
+privateNamespace.on('connect', (socket)=>{
+    console.log('Conexão privada')
 
-server.listen(port, ()=>{
-    console.log(`Servidor rodando na porta: ${port}`)
+    socket.on('private', (msg, username)=>{
+        privateNamespace.emit('private', msg, username)
+    })
 })
 
