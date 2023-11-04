@@ -54,15 +54,25 @@ io.on('connect', (socket)=>{
     socket.on('privateRequest', (recipientName)=>{
         recipientSocket = usersSockets[recipientName]
         if(recipientSocket){
-            recipientSocket.emit('privateMessage', `Solicitação de privado de ${user}`)   
-        }
+            recipientSocket.emit('privateMessage', user)   
+        }        
     })
+
+    socket.on('privateMessage', (recipientResponse)=>{
+        recipientSocket = usersSockets[recipientResponse]
+        if(recipientSocket){
+            recipientSocket.emit('private', 'venha pai')
+        }
+    })   
+    
 })
 
 
-privateNamespace.on('connect', ()=>{
-    recipientSocket.on('private', (msg)=>{
-        console.log(msg)
+privateNamespace.on('connect', (socket)=>{
+    console.log('Conexão estabelecida no privado')
+
+    socket.on('private', (msg)=>{
+        privateNamespace.emit('private', msg)
     })
 })
 

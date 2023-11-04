@@ -26,11 +26,11 @@
     const usersList = document.querySelector('#usersList')
     const form = document.getElementById('form')
     const input = document.getElementById('input')
-    const socket = io.of('/private')
+    const socket = io('/private')
 
     socket.on('private', (msg)=>{
         const item = `<li>${msg}</li>`
-        usersList.insertAdjacentHTML('afterend', item)
+        usersList.insertAdjacentHTML('beforeend', item)
     })
 
     form.addEventListener('submit', (e)=>{
