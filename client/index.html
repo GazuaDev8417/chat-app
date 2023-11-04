@@ -31,7 +31,9 @@
 
 
     document.addEventListener('DOMContentLoaded', ()=>{
-        location.href = 'chat.html'
+        if(username){
+            location.href = '/chat/chat.html'
+        }
     })
 
     
@@ -45,7 +47,7 @@
                 alert(res)
             }else{
                 localStorage.setItem('username', input.value)
-                location.href = 'chat.html'
+                location.href = 'chat/chat.html'
             }
         })
     })
