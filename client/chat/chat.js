@@ -34,38 +34,23 @@ logout.onclick = ()=>{
     }
 }
 
-socket.once('users', (user)=>{
-    user.map(us=>{
-        const item = `<li>${us.user}</li>`
+socket.on('users', (users)=>{
+    users.map(user=>{
+        const item = `<li data-user-id='${user.id}'>${user.user}</li>`
         const newItem = document.createRange()
             .createContextualFragment(item)
             .querySelector('li')
         
         newItem.addEventListener('click', ()=>{
-            if(us.user === username){
+            if(user.user === username){
                 alert('Está chamando você mesmo pro privado.')
                 return
             }
 
-            socket.emit('privateRequest', us.user)
+            socket.emit('privateRequest', user.user)
         })
         usersList.appendChild(newItem)
-    })
-
-    /* const item = `<li>${user}</li>`
-    const newItem = document.createRange()
-        .createContextualFragment(item)
-        .querySelector('li')
-    
-    newItem.addEventListener('click', ()=>{
-        if(user === username){
-            alert('Está chamando você mesmo pro privado.')
-            return
-        }
-
-        socket.emit('privateRequest', user)
-    })
-    usersList.appendChild(newItem) */
+    })    
 })
 
 form.addEventListener('submit', (e)=>{

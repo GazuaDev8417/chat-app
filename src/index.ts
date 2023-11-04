@@ -76,9 +76,6 @@ chatNamespace.on('connect', async(socket):Promise<void>=>{
 /* LIST OF ALL USERS */
     const users:User[] = username && await con('chat_users')
     socket.emit('users', users)
-    /* users && users.map(user=>{
-        socket.emit('users', user.user)
-    }) */
    
 
 /* COMUNICATION AMONG USERS */
