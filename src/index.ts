@@ -79,7 +79,7 @@ chatNamespace.on('connect', async(socket):Promise<void>=>{
    
 
 /* COMUNICATION AMONG USERS */
-    socket.on('message', async(msg)=>{
+    socket.on('message', async(msg, user)=>{
         try{
             const id = Math.random().toString(16)
             await con('chat_messages').insert({
@@ -91,7 +91,7 @@ chatNamespace.on('connect', async(socket):Promise<void>=>{
                 moment: Date.now()
             })
 
-            chatNamespace.emit('message', msg)
+            chatNamespace.emit('message', msg, user)
         }catch(e){
             console.log(`Erro inserir mensagem no banco: ${e}`)
         }
@@ -101,7 +101,7 @@ chatNamespace.on('connect', async(socket):Promise<void>=>{
         .select('*').orderBy('moment', 'asc')
         
     messages.map((message)=>{
-        socket.emit('message', message.message, message.sender)
+        socket.emit('message', message.message, message.sender, message.id)
     })
 
 /* SHIPPING REQUEST FOR PRIVATE CHAT */
@@ -110,6 +110,8 @@ chatNamespace.on('connect', async(socket):Promise<void>=>{
         
         if(recipientSocket){
             recipientSocket.emit('privateMessage', username)
+        }else{
+            socket.emit('isolated', `${recipient} não está na sala.`)
         }
     })
     

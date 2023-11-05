@@ -57,38 +57,49 @@ form.addEventListener('submit', (e)=>{
     e.preventDefault()
     
     if(input.value){
-        socket.emit('message', input.value)
+        socket.emit('message', input.value, username)
 
         input.value = ''
     }
 })
 
-socket.on('message', (msgs, sender)=>{
-    if(sender === username){
-        const item = `
-            <li class='recipient-message'>
-                <div class='message-field'>
-                    <small>${sender}</small><br>
-                    ${msgs}
-                </div>
-            </li>
-        `
-        messages.insertAdjacentHTML('beforeend', item)
-        messages.scrollTop = messages.scrollHeight
-        //window.scrollTo(0, document.body.scrollHeight)
-    }else{
-        const item = `
-            <li class='sender-message'>
-                <div class='message-field'>
-                    <small>${sender}</small><br>
-                    ${msgs}
-                </div>
-            </li>
-        `
-        messages.insertAdjacentHTML('beforeend', item)
-        messages.scrollTop = messages.scrollHeight
-        //window.scrollTo(0, document.body.scrollHeight)
+
+const sentId = new Set()
+socket.on('message', (msgs, sender, id)=>{  
+    console.log(sentId.has(id))
+    if(!sentId.has(id)){
+        //sentId.add(id)
+
+        if(sender === username){
+            const item = `
+                <li class='recipient-message'>
+                    <div class='message-field'>
+                        <small>${sender}</small><br>
+                        ${msgs}
+                    </div>
+                </li>
+            `
+            messages.insertAdjacentHTML('beforeend', item)
+            messages.scrollTop = messages.scrollHeight
+            //window.scrollTo(0, document.body.scrollHeight)
+        }else{
+            const item = `
+                <li class='sender-message'>
+                    <div class='message-field'>
+                        <small>${sender}</small><br>
+                        ${msgs}
+                    </div>
+                </li>
+            `
+            messages.innerHTML += item
+            messages.scrollTop = messages.scrollHeight
+            //window.scrollTo(0, document.body.scrollHeight)
+        }
     }
+})
+
+socket.on('isolated', (msg)=>{
+    alert(msg)
 })
 
 socket.on('privateMessage', (sender)=>{
