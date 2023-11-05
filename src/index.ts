@@ -8,7 +8,12 @@ import { Message, User } from './types/types'
 
 const app = express()
 const server = createServer(app)
-const io = new Server(server)
+const io = new Server(server, {
+    cors: {
+        origin: 'https://chat-app-nu-roan.vercel.app',
+        methods: ['GET', 'POST']
+    }
+})
 const port = process.env.port ?? 3003
 
 
