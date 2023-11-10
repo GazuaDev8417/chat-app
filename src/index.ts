@@ -4,25 +4,28 @@ import { Server } from 'socket.io'
 import { createServer } from 'http'
 import { con } from './db/connection'
 import { Message, User } from './types/types'
+import cors from 'cors'
 
 
 const app = express()
 const server = createServer(app)
 const io = new Server(server, {
     cors: {
-        origin: 'https://chat-app-nu-roan.vercel.app',
-        methods: ['GET', 'POST']
+        origin: 'https://chat-client-hnrt.onrender.com',
+        methods: ['GET,HEAD,PUT,PATCH,POST,DELETE']
     }
 })
 const port = process.env.port ?? 3003
 
+//app.use(express.static(path.join(__dirname, '../../client')))
 
 
-app.use(express.static(path.join(__dirname, '../client')))
+
 
 server.listen(port, ()=>{
     console.log(`Servidor rodando na porta: ${port}`)
 })
+
 
 //NAMESPACES
 const chatNamespace = io.of('/chat')
