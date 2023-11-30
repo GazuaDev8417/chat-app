@@ -17,7 +17,7 @@ const io = new Server(server, {
 })
 const port = process.env.port ?? 3003
 
-//app.use(express.static(path.join(__dirname, '../../client')))
+app.use(express.static(path.join(__dirname, '../../client')))
 
 
 
