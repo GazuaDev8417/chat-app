@@ -1,12 +1,16 @@
-:root{
+/* :root{
     color-scheme: light dark;
-}
+} */
 
 body{
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     height: 100vh;
+    background-image: url(https://i.redd.it/3jfjc53fsyb61.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    color: white;
 }
 
 header{
@@ -112,24 +116,24 @@ header{
     position: fixed;
     display: flex;
     align-items: center;
-    gap: 30px;
+    gap: 10px;
     bottom: 0;
     left: 50%;
     transform: translate(-50%, -20%);
 }
 
 .input{
-    border-radius: 20px;
     font-size: 1rem;
     outline: none;
-    border: none;
+    border: 1px solid;
+    border-radius: 5px;
     height: 30px;
     width: 25vw;
     padding-left: 10px;
 }
 
 .btn{
-    height: 30px;
+    height: 35px;
     border: none;
     border-radius: 5px;
     padding: 0 20px;

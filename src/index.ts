@@ -9,15 +9,20 @@ import cors from 'cors'
 
 const app = express()
 const server = createServer(app)
+const corsOptions = {
+        origin: ['https://chat-client-hnrt.onrender.com', 'http://127.0.0.1:5500',],
+        methods: ['GET,HEAD,PUT,PATCH,POST,DELETE']
+}
 const io = new Server(server, {
     cors: {
-        origin: 'https://chat-client-hnrt.onrender.com',
+        origin: ['https://chat-client-hnrt.onrender.com', 'http://127.0.0.1:5500',],
         methods: ['GET,HEAD,PUT,PATCH,POST,DELETE']
     }
 })
 const port = process.env.port ?? 3003
 
-app.use(express.static(path.join(__dirname, '../../client')))
+app.use(cors(corsOptions))
+app.use(express.static(path.join(__dirname, '../client')))
 
 
 
@@ -52,6 +57,7 @@ chatNamespace.on('connect', async(socket):Promise<void>=>{
     }) */
 
     socket.on('login', async(nickname)=>{
+        console.log(nickname)
         try{
             const [user] = await con('chat_users').where({
                 user: nickname
@@ -96,7 +102,7 @@ chatNamespace.on('connect', async(socket):Promise<void>=>{
                 message: msg,
                 description: 'Vai veno',
                 filename: 'Vai veno',
-                moment: Date.now()
+                moment: new Date()
             })
 
             chatNamespace.emit('message', msg, user)

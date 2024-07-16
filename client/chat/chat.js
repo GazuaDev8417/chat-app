@@ -35,6 +35,7 @@ logout.onclick = ()=>{
 }
 
 socket.on('users', (users)=>{
+    
     users.map(user=>{
         const item = `<li data-user-id='${user.id}'>${user.user}</li>`
         const newItem = document.createRange()
