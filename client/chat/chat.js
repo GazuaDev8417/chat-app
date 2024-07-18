@@ -37,7 +37,7 @@ logout.onclick = ()=>{
 socket.on('users', (users)=>{
     
     users.map(user=>{
-        const item = `<li data-user-id='${user.id}'>${user.user}</li>`
+        const item = `<li data-user-id='${user.id}' class='list'>${user.user}</li>`
         const newItem = document.createRange()
             .createContextualFragment(item)
             .querySelector('li')

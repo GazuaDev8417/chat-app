@@ -1,0 +1,71 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,300&display=swap');
+
+body{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+header{
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+legend{
+    font-size: 1.3rem;
+}
+
+.login{
+    display: flex;
+    justify-content: center;
+    margin-top: 5vh;
+}
+
+fieldset{
+    padding: 30px;   
+    border-radius: 10px; 
+    box-shadow: 3px 3px 6px;
+}
+
+fieldset .input-container{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+}
+
+fieldset .input-container input{
+    width: 250px;
+    height: 30px;
+    border-radius: 10px;
+    border: 1px solid black;
+    outline: none;
+    padding-left: 10px;
+    font-size: 1.5rem;
+    font-family: 'Cormorant Garamond', serif;
+    transition: .3s;
+    color: whitesmoke;
+}
+
+fieldset .input-container input:focus{
+    background-image: url(https://i.redd.it/3jfjc53fsyb61.jpg);
+}
+
+fieldset .input-container button{
+    width: 200px;
+    padding: 5px;
+    border-radius: 15px;
+    border: 1px solid;
+    cursor: pointer;
+    transition: .5s;
+}
+
+fieldset .input-container button:hover{
+    background-color: green;
+    box-shadow: 0px 0px 6px green;
+    border: none;
+    color: whitesmoke;
+}

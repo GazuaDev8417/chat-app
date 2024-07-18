@@ -1,6 +1,4 @@
-/* :root{
-    color-scheme: light dark;
-} */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,300&display=swap');
 
 body{
     margin: 0;
@@ -20,10 +18,24 @@ header{
     padding: 0 1.5rem;
 }
 
+header h1{
+    font-family: 'Cormorant Garamond', serif;
+    color: green;
+}
+
+header .btn{
+    background-color: #ff0000;
+    color: whitesmoke;
+}
+
 .menuContainer{
     display: flex;
     align-items: center;
     gap: 3rem;
+}
+
+.menuContainer li{
+    font-family: 'Cormorant Garamond', serif;
 }
 
 #menu-bars{
@@ -46,7 +58,7 @@ header{
     height: 300px;
     overflow: auto;
     clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
-    transition: .5s;
+    transition: .5s;    
 }  
 
 #users::-webkit-scrollbar{
@@ -65,6 +77,9 @@ header{
     cursor: pointer;
     margin: 5px;
     transition: .3s;
+    font-family: 'Cormorant Garamond', serif;
+    text-align: center;
+    font-weight: bold;
 }
 
 #users li:hover{
@@ -98,6 +113,7 @@ header{
     padding: .5rem 1rem;
     border-radius: 10px;
     margin: 5px 0;
+    color: black;
 }
 
 .sender-message .message-field{
@@ -106,10 +122,6 @@ header{
     padding: .5rem 1rem;
     border-radius: 10px;
     margin: 5px 0;
-}
-
-#messages li:nth-child(odd){
-    
 }
 
 .form{
@@ -122,7 +134,7 @@ header{
     transform: translate(-50%, -20%);
 }
 
-.input{
+.form input{
     font-size: 1rem;
     outline: none;
     border: 1px solid;
@@ -138,12 +150,13 @@ header{
     border-radius: 5px;
     padding: 0 20px;
     cursor: pointer;
+    transition: .3s;
 }
 
-.btn:hover{
-    box-shadow: 0 0 5px;            
+.form .btn:hover{
+    box-shadow: 0 0 5px gray;            
 }
 
-.btn:active{
+.form .btn:active{
     transform: scale(.9);
 }
