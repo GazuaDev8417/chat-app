@@ -30,13 +30,38 @@ exitPrivate.onclick = ()=>{
     socket.emit('private', `${username} saiu do privado`, username)
 }
 
-socket.on('private', (msg, sender)=>{       
-    const item = `
-        <li>
+socket.on('private', (msgs, sender)=>{       
+    /* const item = `
+        <li class='list'>
             <small>${sender}</small><br>
             ${msg}
         </li>`
-    messages.insertAdjacentHTML('beforeend', item)
+    messages.insertAdjacentHTML('beforeend', item) */
+    if(sender === username){
+        const item = `
+            <li class='recipient-message'>
+                <div class='message-field'>
+                    <small>${sender}</small><br>
+                    ${msgs}
+                </div>
+            </li>
+        `
+        messages.insertAdjacentHTML('beforeend', item)
+        messages.scrollTop = messages.scrollHeight
+        //window.scrollTo(0, document.body.scrollHeight)
+    }else{
+        const item = `
+            <li class='sender-message'>
+                <div class='message-field'>
+                    <small>${sender}</small><br>
+                    ${msgs}
+                </div>
+            </li>
+        `
+        messages.innerHTML += item
+        messages.scrollTop = messages.scrollHeight
+        //window.scrollTo(0, document.body.scrollHeight)
+    }
 })
 
 form.addEventListener('submit', (e)=>{

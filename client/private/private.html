@@ -35,14 +35,30 @@
 
         #messages{
             list-style-type: none;
-            width: 30vw;
+            width: 80%;
+            overflow: auto;
+            height: 80vh;
         }
-        #messages li{
+        #messages .recipient-message{
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .recipient-message .message-field{
+            background-color: lightgreen;
+            width: 150px;
             padding: .5rem 1rem;
             border-radius: 10px;
+            margin: 5px 0;
+            color: black;
         }
-        #messages li:nth-child(odd){
-            background: lightgreen;
+
+        .sender-message .message-field{
+            background-color: green;
+            width: 150px;
+            padding: .5rem 1rem;
+            border-radius: 10px;
+            margin: 5px 0;
         }
         .form{
             display: flex;
