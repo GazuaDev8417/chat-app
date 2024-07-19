@@ -80,10 +80,10 @@ chatNamespace.on('connect', async(socket):Promise<void>=>{
 
     socket.on('logout', async(nickname)=>{
         try{
-            const result = await con('chat_messages').delete().where({ sender: nickname })
-            console.log(result)
-            const resultOfUser = await con('chat_users').delete().where({ user: nickname })
-            console.log(resultOfUser)
+
+            await con('chat_messages').delete().where({ sender: nickname })
+            await con('chat_users').delete().where({ user: nickname })
+            
         }catch(e){
             console.log(e)
         }
